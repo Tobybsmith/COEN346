@@ -1,0 +1,5 @@
+#BlueJ class context
+comment0.target=InvalidPIDException
+comment1.params=aErr
+comment1.target=InvalidPIDException(java.lang.String)
+numComments=2

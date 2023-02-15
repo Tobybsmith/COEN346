@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=Manager
+comment1.params=
+comment1.target=Manager()
+comment2.params=
+comment2.target=int\ CreateProcess()
+comment3.params=aPID
+comment3.target=void\ TerminateProcess(int)
+comment4.params=aIn
+comment4.target=int\ MapPIDToIndex(int)
+numComments=5

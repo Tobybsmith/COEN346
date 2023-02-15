@@ -1,0 +1,15 @@
+#BlueJ class context
+comment0.target=PIDManager
+comment1.params=
+comment1.target=PIDManager()
+comment2.params=
+comment2.target=void\ AllocateMap()
+comment3.params=
+comment3.target=int\ AllocatePID()
+comment4.params=
+comment4.target=int\ GetNextUnsetBit()
+comment5.params=aIndex
+comment5.target=void\ ReleasePID(int)
+comment6.params=aPIDIn
+comment6.target=int\ MapToIndex(int)
+numComments=7

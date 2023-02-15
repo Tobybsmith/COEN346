@@ -1,0 +1,24 @@
+#BlueJ class context
+comment0.target=Task
+comment1.params=name\ priority\ burst
+comment1.target=Task(java.lang.String,\ int,\ int)
+comment2.params=
+comment2.target=java.lang.String\ getName()
+comment2.text=\r\n\ Appropriate\ getters\r\n
+comment3.params=
+comment3.target=int\ getTid()
+comment4.params=
+comment4.target=int\ getPriority()
+comment5.params=
+comment5.target=int\ getBurst()
+comment6.params=priority
+comment6.target=int\ setPriority(int)
+comment6.text=\r\n\ Appropriate\ setters\r\n
+comment7.params=burst
+comment7.target=int\ setBurst(int)
+comment8.params=other
+comment8.target=boolean\ equals(java.lang.Object)
+comment8.text=\r\n\ We\ override\ equals()\ so\ we\ can\ use\ a\r\n\ Task\ object\ in\ Java\ collection\ classes.\r\n
+comment9.params=
+comment9.target=java.lang.String\ toString()
+numComments=10

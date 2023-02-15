@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=SJF
+comment1.params=aTaskList
+comment1.target=SJF(java.util.List)
+comment2.params=
+comment2.target=void\ schedule()
+comment3.params=
+comment3.target=Task\ pickNextTask()
+comment4.params=
+comment4.target=java.util.List\ sort()
+numComments=5
