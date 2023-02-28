@@ -50,7 +50,7 @@ public class RR implements Algorithm
             }
             //Run here
             CPU.run(lCurrent, 10);
-           
+           /*/
             if(lCurrent.getBurst() <=10)
             {
                 TurnAroundTime = lCurrent.getBurst();
