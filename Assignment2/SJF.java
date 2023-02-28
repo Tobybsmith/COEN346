@@ -1,9 +1,6 @@
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.stream.Collectors;
-import java.time.Duration;
-import java.time.Instant;
+
 
 public class SJF implements Algorithm {
     int gLocationInQueue = -1;
