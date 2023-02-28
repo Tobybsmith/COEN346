@@ -9,6 +9,15 @@ public class RR implements Algorithm
     List<Integer> gTimeList;
     int gCompletionCounter = 0;
     boolean gTermFlag = false;
+    int TurnAroundTime = 0;
+    int StartTime = 0;
+    int WaitTime = 0;
+    int WaitSum = 0;
+    int avgWait = 0; 
+    int avgTurn = 0;
+    List<Integer> TurnAroundTimeList;
+    List<Integer> WaitList;
+
     public RR(List<Task> aTaskList)
     {
         gTaskList = aTaskList;
@@ -41,6 +50,18 @@ public class RR implements Algorithm
             }
             //Run here
             CPU.run(lCurrent, 10);
+           
+            if(lCurrent.getBurst() <=10)
+            {
+                TurnAroundTime = lCurrent.getBurst();
+            }
+            else
+            {
+                TurnAroundTime = lCurrent.getBurst() - 10;
+                TurnAroundTimeList.add(TurnAroundTime);
+            }
+            */
+            
             if (gTermFlag)
             {
                 System.out.println("Task " + lCurrent.getName() + " finished.");
