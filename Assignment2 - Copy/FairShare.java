@@ -52,7 +52,8 @@ public class FairShare implements Algorithm {
             {
                 //Before this, gTimeAlloc holds the process count for each user
                 //After this it holds the time allocation per process
-                gTimeAlloc[i] = gTimeQuant / gTimeAlloc[i];
+                if (gTimeAlloc[i] > 0)
+                    gTimeAlloc[i] = gTimeQuant / gTimeAlloc[i];
             }
 
             //Get the time for this task:
@@ -75,13 +76,26 @@ public class FairShare implements Algorithm {
             {
                 //Process is finished.
             }
-        
+            
+            boolean lDone = true;
+            for (int i = 0; i < gTaskList.size(); i++)
+            {
+                if (gTaskList.get(i).getBurstRemain() != 0)
+                {
+                    lDone = false;
+                }
+            }
+            
+            if (lDone == true)
+            {
+                return;
+            }
             gLocationInQueue += 1;
             gLocationInQueue %= gTaskList.size();
         }
     }
 
     public Task pickNextTask() {
-        return gTasks[gLocationInQueue];
+        return gTaskList.get(gLocationInQueue);
     }
 }

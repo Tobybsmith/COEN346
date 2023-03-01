@@ -7,11 +7,9 @@ public class RR implements Algorithm {
 
     List<Integer> gTimeList;
     int gCompletionCounter = 0;
-    int run10Count = 0;
     boolean gTermFlag = false;
     int TurnAroundTime = 0;
     int TimeLeft = 0;
-    int timePassed = 0; // keep track of time slices less then 10 that ran
     int StartTime = 0;
     int WaitTime = 0;
     int WaitSum = 0;
@@ -46,19 +44,13 @@ public class RR implements Algorithm {
             }
             // Run here
             CPU.run(lCurrent, 10);
-            if (lCurrent.getBurst() >= 10) {
-                run10Count += 1; // incrememt the run count to keep track of how many task ran
-            } else {
-                timePassed = lCurrent.getBurst();
-            }
 
             if (lCurrent.getBurst() <= 10) {
                 TurnAroundTime = lCurrent.getBurst();
-                WaitTime = (10 * run10Count) + timePassed;
-
+                // WaitTime = 0;
             } else {
                 if (lCurrent.getBurst() > 10)
-                    WaitTime = 10 * run10Count;
+                    WaitTime = 10 * (gTaskList.size() - 1);
                 WaitList.add(WaitTime);
                 TimeLeft = lCurrent.getBurst() - 10;
                 TurnAroundTime = lCurrent.getBurst() + WaitTime;

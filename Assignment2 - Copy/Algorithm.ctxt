@@ -1,0 +1,10 @@
+#BlueJ class context
+comment0.target=Algorithm
+comment0.text=\r\n\ Interface\ representing\ a\ generic\ scheduling\ algorithm.\r\n\r\n\ @author\ Greg\ Gagne\ -\ March\ 2016\r\n
+comment1.params=
+comment1.target=void\ schedule()
+comment1.text=\r\n\ Invokes\ the\ scheduler\r\n
+comment2.params=
+comment2.target=Task\ pickNextTask()
+comment2.text=\r\n\ Selects\ the\ next\ task\ using\ the\ appropriate\ scheduling\ algorithm\r\n
+numComments=3
