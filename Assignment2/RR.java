@@ -7,14 +7,13 @@ public class RR implements Algorithm {
 
     List<Integer> gTimeList;
     int gCompletionCounter = 0;
-    int run10Count = 0;
     boolean gTermFlag = false;
     int TurnAroundTime = 0;
     int TimeLeft = 0;
-    int timePassed = 0; // keep track of time slices less then 10 that ran
     int StartTime = 0;
     int WaitTime = 0;
     int WaitSum = 0;
+    int TurnSum = 0;
     int avgWait = 0;
     int avgTurn = 0;
     List<Integer> TurnAroundTimeList;
@@ -46,24 +45,24 @@ public class RR implements Algorithm {
             }
             // Run here
             CPU.run(lCurrent, 10);
-            if (lCurrent.getBurst() >= 10) {
-                run10Count += 1; // incrememt the run count to keep track of how many task ran
-            } else {
-                timePassed = lCurrent.getBurst();
+            
+            int runTime  = lCurrent.getBurstRemain() >= 10 ? 10 : lCurrent.getBurstRemain();
+            lCurrent.decrementRemainBurst(runTime);
+            if(lCurrent.isDone) {
+                TurnAroundTime = lCurrent.getBurst() + lCurrent.waitTime;
+                TurnSum += TurnAroundTime;
+                WaitSum += lCurrent.waitTime;
             }
 
-            if (lCurrent.getBurst() <= 10) {
-                TurnAroundTime = lCurrent.getBurst();
-                WaitTime = (10 * run10Count) + timePassed;
-
-            } else {
-                if (lCurrent.getBurst() > 10)
-                    WaitTime = 10 * run10Count;
-                WaitList.add(WaitTime);
-                TimeLeft = lCurrent.getBurst() - 10;
-                TurnAroundTime = lCurrent.getBurst() + WaitTime;
-                TurnAroundTimeList.add(TurnAroundTime);
+            for(int i = 0; i < gTaskList.size(); i++){
+                Task newTask = gTaskList.get(i);
+                if (!newTask.equals(lCurrent) && !newTask.isDone){
+                    WaitTime += runTime;
+                    newTask.waitTime += runTime;
+                }
             }
+
+            //TODO NEED TO FIND A WAY TO CALCULATE THE AVRG TURN AND WAIT TIME WHEN ALL TASK ARE DONE, MAYBE WITH GCOMPLETECOUNT??
 
             if (gTermFlag) {
                 System.out.println("Task " + lCurrent.getName() + " finished.");

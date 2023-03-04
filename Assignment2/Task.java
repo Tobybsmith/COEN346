@@ -24,6 +24,9 @@ public class Task
     private int burst;
     private int owner;
     private int burstRemain;
+    boolean isDone = false;
+    int waitTime = 0;
+
 
     /**
      * We use an atomic integer to assign each task a unique task id.
@@ -109,7 +112,7 @@ public class Task
          * two tasks are equal if they have the same tid.
          */
         Task rhs = (Task)other;
-        return (this.tid == rhs.tid) ? true : false;
+        return (this.tid == rhs.tid) ? true : false; //should take out  ? true : false cus return () is already bool
     }
 
     public String toString() {
@@ -118,5 +121,11 @@ public class Task
             "Tid: " + tid + "\n" + 
             "Priority: " + priority + "\n" + 
             "Burst: " + burst + "\n";
+    }
+
+    //decrement remaining burst
+    public void decrementRemainBurst(int remainBurstToSubtract){
+        this.burstRemain -= remainBurstToSubtract;
+        isDone = this.burstRemain <= 0;
     }
 }
