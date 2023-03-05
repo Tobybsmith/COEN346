@@ -96,6 +96,12 @@ public class Task
         this.burstRemain = a;
     }
 
+    public int setWaitTime(int wait)
+    {
+        this.waitTime = wait;
+        return this.waitTime;
+    }
+
     /**
      * We override equals() so we can use a
      * Task object in Java collection classes.

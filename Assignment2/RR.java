@@ -14,8 +14,8 @@ public class RR implements Algorithm {
     int WaitTime = 0;
     int WaitSum = 0;
     int TurnSum = 0;
-    int avgWait = 0;
-    int avgTurn = 0;
+    float avgWait = 0;
+    float avgTurn = 0;
     List<Integer> TurnAroundTimeList;
     List<Integer> WaitList;
 
@@ -30,48 +30,47 @@ public class RR implements Algorithm {
     public void schedule() {
         // A queue is first in first out, so we just iterate normally
         Task lCurrent = null;
-        while (true) {
-            lCurrent = pickNextTask();
-            // Juicy lil trick to keep a number in a range with no conditional logic
-            gLocationInQueue += 1;
-            gLocationInQueue %= gTaskList.size();
-            // Break once everything is done
-            if (gCompletionCounter == gTaskList.size()) {
-                break;
-            }
-
-            if (lCurrent == null) {
-                continue;
-            }
-            // Run here
+        int numberOfTasks = gTaskList.size();
+        while (gTaskList.size() > 0) {
+            lCurrent = gTaskList.get(gLocationInQueue);
             CPU.run(lCurrent, 10);
             
             int runTime  = lCurrent.getBurstRemain() >= 10 ? 10 : lCurrent.getBurstRemain();
             lCurrent.decrementRemainBurst(runTime);
+
             if(lCurrent.isDone) {
                 TurnAroundTime = lCurrent.getBurst() + lCurrent.waitTime;
+                System.out.println(TurnAroundTime);
+                System.out.println(lCurrent.waitTime);
                 TurnSum += TurnAroundTime;
                 WaitSum += lCurrent.waitTime;
+
+                System.out.println("Task " + lCurrent.getName() + " finished.");
+                System.out.println();
+                gTaskList.remove(lCurrent);
+                gLocationInQueue -= 1;
             }
 
             for(int i = 0; i < gTaskList.size(); i++){
                 Task newTask = gTaskList.get(i);
-                if (!newTask.equals(lCurrent) && !newTask.isDone){
-                    WaitTime += runTime;
+                if (!newTask.equals(lCurrent)){
                     newTask.waitTime += runTime;
                 }
+                
             }
 
-            //TODO NEED TO FIND A WAY TO CALCULATE THE AVRG TURN AND WAIT TIME WHEN ALL TASK ARE DONE, MAYBE WITH GCOMPLETECOUNT??
-
-            if (gTermFlag) {
-                System.out.println("Task " + lCurrent.getName() + " finished.");
-                System.out.println();
-                gTaskList.remove(lCurrent);
-
-            }
             gTermFlag = false;
+            gLocationInQueue += 1;
+            if(gTaskList.size() > 0){
+                gLocationInQueue %= gTaskList.size();
+            }
         }
+        
+        // after we iterate through the list, print average turnaround and wait time
+        avgTurn = ((float) TurnSum) / numberOfTasks;
+        avgWait = ((float) WaitSum) / numberOfTasks;
+        System.out.println("The Turnaround time average is " + avgTurn);
+        System.out.println("The wait time average is " + avgWait);
     }
 
     public Task pickNextTask() {
