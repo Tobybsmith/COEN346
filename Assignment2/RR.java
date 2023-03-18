@@ -7,16 +7,15 @@ public class RR implements Algorithm {
 
     List<Integer> gTimeList;
     int gCompletionCounter = 0;
-    int run10Count = 0;
     boolean gTermFlag = false;
     int TurnAroundTime = 0;
     int TimeLeft = 0;
-    int timePassed = 0; // keep track of time slices less then 10 that ran
     int StartTime = 0;
     int WaitTime = 0;
     int WaitSum = 0;
-    int avgWait = 0;
-    int avgTurn = 0;
+    int TurnSum = 0;
+    float avgWait = 0;
+    float avgTurn = 0;
     List<Integer> TurnAroundTimeList;
     List<Integer> WaitList;
 
@@ -31,48 +30,47 @@ public class RR implements Algorithm {
     public void schedule() {
         // A queue is first in first out, so we just iterate normally
         Task lCurrent = null;
-        while (true) {
-            lCurrent = pickNextTask();
-            // Juicy lil trick to keep a number in a range with no conditional logic
-            gLocationInQueue += 1;
-            gLocationInQueue %= gTaskList.size();
-            // Break once everything is done
-            if (gCompletionCounter == gTaskList.size()) {
-                break;
-            }
-
-            if (lCurrent == null) {
-                continue;
-            }
-            // Run here
+        int numberOfTasks = gTaskList.size();
+        while (gTaskList.size() > 0) {
+            lCurrent = gTaskList.get(gLocationInQueue);
             CPU.run(lCurrent, 10);
-            if (lCurrent.getBurst() >= 10) {
-                run10Count += 1; // incrememt the run count to keep track of how many task ran
-            } else {
-                timePassed = lCurrent.getBurst();
-            }
+            
+            int runTime  = lCurrent.getBurstRemain() >= 10 ? 10 : lCurrent.getBurstRemain();
+            lCurrent.decrementRemainBurst(runTime);
 
-            if (lCurrent.getBurst() <= 10) {
-                TurnAroundTime = lCurrent.getBurst();
-                WaitTime = (10 * run10Count) + timePassed;
+            if(lCurrent.isDone) {
+                TurnAroundTime = lCurrent.getBurst() + lCurrent.waitTime;
+                System.out.println(TurnAroundTime);
+                System.out.println(lCurrent.waitTime);
+                TurnSum += TurnAroundTime;
+                WaitSum += lCurrent.waitTime;
 
-            } else {
-                if (lCurrent.getBurst() > 10)
-                    WaitTime = 10 * run10Count;
-                WaitList.add(WaitTime);
-                TimeLeft = lCurrent.getBurst() - 10;
-                TurnAroundTime = lCurrent.getBurst() + WaitTime;
-                TurnAroundTimeList.add(TurnAroundTime);
-            }
-
-            if (gTermFlag) {
                 System.out.println("Task " + lCurrent.getName() + " finished.");
                 System.out.println();
                 gTaskList.remove(lCurrent);
-
+                gLocationInQueue -= 1;
             }
+
+            for(int i = 0; i < gTaskList.size(); i++){
+                Task newTask = gTaskList.get(i);
+                if (!newTask.equals(lCurrent)){
+                    newTask.waitTime += runTime;
+                }
+                
+            }
+
             gTermFlag = false;
+            gLocationInQueue += 1;
+            if(gTaskList.size() > 0){
+                gLocationInQueue %= gTaskList.size();
+            }
         }
+        
+        // after we iterate through the list, print average turnaround and wait time
+        avgTurn = ((float) TurnSum) / numberOfTasks;
+        avgWait = ((float) WaitSum) / numberOfTasks;
+        System.out.println("The Turnaround time average is " + avgTurn);
+        System.out.println("The wait time average is " + avgWait);
     }
 
     public Task pickNextTask() {
