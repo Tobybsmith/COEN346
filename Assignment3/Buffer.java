@@ -1,39 +1,66 @@
- 
+class Buffer {
 
-public class Buffer {
-    private final static int BUFFER_SIZE = 10;
+    private int currentSize;
+    public int[] circularQueueElements;
+    private int rear;
+    private int front;
 
-    private int[] buffer = new int[BUFFER_SIZE];
-    private int in;
-    private int out;
-    private int count = 0;
-
-
-    public Buffer(){
+    public Buffer() {
+        circularQueueElements = new int[10];
+        currentSize = 0;
+        front = -1;
+        rear = -1;
     }
 
-    public int readCount(){
-        return count;
+    public void enqueue(int item) {
+        if (isFull()) {
+            return;
+        } else {
+            rear = (rear + 1) % circularQueueElements.length;
+            circularQueueElements[rear] = item;
+            currentSize++;
+
+            if (front == -1) {
+                front = rear;
+            }
+        }
     }
 
-    public int getNextItem(int pos){
-        int item = buffer[pos];
-        buffer[pos] = 0;
-        return item;
+    /**
+     * Dequeue element from Front.
+     */
+    public int dequeue() {
+        int deQueuedElement;
+        if (isEmpty()) {
+            return -1;
+        } else {
+            deQueuedElement = circularQueueElements[front];
+            circularQueueElements[front] = 0;
+            front = (front + 1) % circularQueueElements.length;
+            currentSize--;
+        }
+        return deQueuedElement;
     }
 
-    public void setIn(int pos){
-        this.in = pos;
+    /**
+     * Check if queue is full.
+     */
+    public boolean isFull() {
+        return (currentSize == circularQueueElements.length);
     }
 
-    public int getNextPosition(){
-        return in;
+    /**
+     * Check if Queue is empty.
+     */
+    public boolean isEmpty() {
+        return (currentSize == 0);
     }
 
-    public void insertItem(int item, int pos){
-        //no way to know if this is overwritten or not
-        buffer[pos] = item;
-        count += 1;
+    public int getRear() {
+        return rear;
     }
 
+    public int getSize() {
+        return currentSize;
+    }
 }
