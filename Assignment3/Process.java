@@ -39,9 +39,6 @@ public class Process {
         writer.println(uid);
         this.processId = uid;
         uid += 1;
-
-        P_BUF = Pattern.compile("addToBuffer[0-9][0-9]+");
-        G_BUF = Pattern.compile("addToBuffer[0-9]+");
     }
 
     public int run(int times) {
@@ -49,11 +46,10 @@ public class Process {
 
         for (int i = 0; i < times; i++) {
             try {
-                if (!queued_intr_true)
-                {
+                if (!queued_intr_true) {
                     writer.println("RUN");
                 }
-                
+
                 System.out.println("sent");
                 if (queued_intr_true) {
                     // go attempt the queued instruction
@@ -64,18 +60,19 @@ public class Process {
                         System.out.println("Adding: " + val + ", To: " + idx);
                         if (put(val) == -1) {
                             // put failed
+                            return -2;
+                        } else {
                             return 0;
                         }
                     } else if (queued_intr.equals("consume")) {
                         if (getItem() == -1) {
-                            // get item failed failed
+                            return -3;
+                        } else {
                             return 0;
-                        } 
+                        }
                     }
-                    return 0;
                 }
                 String instruction = reader.readLine();
-                System.out.println("Instruction: " + instruction);
                 if (instruction.equals(NUM_ITEMS)) {
                     getNumberofItems();
                 } else if (instruction.equals(NEXT_ITEM_POS)) {
@@ -85,7 +82,6 @@ public class Process {
                 } else if (instruction.equals(CONSUME)) {
                     // Consume from buffer here
                     if (getItem() == -1) {
-                        System.out.println("Failed to consume");
                         return 0;
                     }
                 }
@@ -94,9 +90,7 @@ public class Process {
                 }
                 if (Pattern.matches("[0-9]+addToBuffer[0-9]+", instruction)) {
                     // Parse Buffer request
-                    System.out.println("Adding to buffer");
                     parseBufferRequest(instruction);
-                    System.out.println("Adding: " + val + ", To: " + idx);
                     if (put(val) == -1) {
                         // put failed
                         return 0;
@@ -111,19 +105,19 @@ public class Process {
     }
 
     public void getNumberofItems() throws IOException {
-        int numItems = buffer.getSize();
+        int numItems = buffer.s();
         writer.println(numItems);
     }
 
     public void getNextItemPosition() {
-        writer.println(buffer.getRear());
+        writer.println(0);
     }
 
     public int getItem() {
         if (buffer.isEmpty()) {
             queued_intr = "consume";
             queued_intr_true = true;
-            //writer.println("SKIP");
+            // writer.println("SKIP");
             return -1;
         } else {
             queued_intr = "";
@@ -153,7 +147,6 @@ public class Process {
     public void parseBufferRequest(String req) {
         // Will be of the forn "addToBuffer[index][numtoadd]"
         // Split the string into the first int component and the last int component
-        boolean firstSeq = true;
         // Hmm today i will use a regex
         // clueless ^
         String[] arr = req.split("addToBuffer");

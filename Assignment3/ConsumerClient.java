@@ -9,7 +9,7 @@ import java.util.Scanner;
 public class ConsumerClient {
 
     public static void main(String[] args) {
-        int id;
+        int id = 0;
         int toSend = 0;
         int idx = 0;
         Scanner sc = new Scanner(System.in);
@@ -27,8 +27,7 @@ public class ConsumerClient {
 
             // wait for signal to start
             fromServer = reader.readLine();
-            System.out.println("Instruction From Server: " + fromServer);
-            int i = 0;
+            // System.out.println("Instruction From Server: " + fromServer);
             // writer.println() to send client -> server
             // reader.readline() to read from server
 
@@ -67,7 +66,7 @@ public class ConsumerClient {
                     // maybe?
                     response = reader.readLine();
                     if (selection == 0) {
-                        System.out.println("Buffer Count: " + response);
+                        System.out.println("Buffer Item Count: " + response);
                     } else if (selection == 1) {
                         System.out.println("Consumed Item: " + response);
                     } else if (selection == 2) {

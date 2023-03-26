@@ -1,24 +1,24 @@
 class Buffer {
 
-    private int currentSize;
-    public int[] circularQueueElements;
+    private int size;
+    public int[] buff;
     private int rear;
     private int front;
 
     public Buffer() {
-        circularQueueElements = new int[10];
-        currentSize = 0;
+        buff = new int[10];
+        size = 0;
         front = -1;
         rear = -1;
     }
 
     public void enqueue(int item) {
-        if (isFull()) {
-            return;
-        } else {
-            rear = (rear + 1) % circularQueueElements.length;
-            circularQueueElements[rear] = item;
-            currentSize++;
+        if (!isFull()) {
+            rear += 1;
+            rear %= buff.length;
+
+            buff[rear] = item;
+            size += 1;
 
             if (front == -1) {
                 front = rear;
@@ -26,41 +26,28 @@ class Buffer {
         }
     }
 
-    /**
-     * Dequeue element from Front.
-     */
     public int dequeue() {
-        int deQueuedElement;
+        int temp;
         if (isEmpty()) {
             return -1;
         } else {
-            deQueuedElement = circularQueueElements[front];
-            circularQueueElements[front] = 0;
-            front = (front + 1) % circularQueueElements.length;
-            currentSize--;
+            temp = buff[front];
+            buff[front] = 0;
+            front = (front + 1) % buff.length;
+            size--;
         }
-        return deQueuedElement;
+        return temp;
     }
 
-    /**
-     * Check if queue is full.
-     */
     public boolean isFull() {
-        return (currentSize == circularQueueElements.length);
+        return (size == buff.length);
     }
 
-    /**
-     * Check if Queue is empty.
-     */
     public boolean isEmpty() {
-        return (currentSize == 0);
+        return (size == 0);
     }
 
-    public int getRear() {
-        return rear;
-    }
-
-    public int getSize() {
-        return currentSize;
+    public int s() {
+        return size;
     }
 }
