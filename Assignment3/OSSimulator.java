@@ -21,10 +21,21 @@ public class OSSimulator extends Thread {
     private Queue<Process> consumeQueue;
     private Queue<Process> produceQueue;
 
+    //false = good, true = bad
+    private boolean isUnsafe = false;
+
     public OSSimulator() {
         procs = new LinkedList<Process>();
         consumeQueue = new LinkedList<Process>();
         produceQueue = new LinkedList<Process>();
+    }
+    
+    public OSSimulator(boolean safety)
+    {
+        procs = new LinkedList<Process>();
+        consumeQueue = new LinkedList<Process>();
+        produceQueue = new LinkedList<Process>();
+        isUnsafe = safety;
     }
 
     public int createProcess(Socket client) throws Exception {
@@ -36,7 +47,7 @@ public class OSSimulator extends Thread {
         for (int i = 0; i < clients.length; i++) {
             if (clients[(LocationInQueue + i) % clients.length] == null) {
                 // empty spot, place it here
-                clients[(LocationInQueue + i) % clients.length] = new Process(numClients - 1, client, buffer);
+                clients[(LocationInQueue + i) % clients.length] = new Process(numClients - 1, client, buffer, isUnsafe);
                 break;
                 // add to queue;
             }

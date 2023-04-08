@@ -8,10 +8,18 @@ public class ProcessServer {
 
     private static OSSimulator simulator;
     public static void main(String[] args){
-        simulator = new OSSimulator();
+        if (args[1].equals("s"))
+        {
+            simulator = new OSSimulator(false);
+        }
+        else
+        {
+            simulator = new OSSimulator(true);
+        }
         simulator.start();
+        ServerSocket socket;
         try {
-            ServerSocket socket = new ServerSocket(8000);
+            socket = new ServerSocket(8000);
 
             while(true) {
                 System.out.println("Server waiting for connections");

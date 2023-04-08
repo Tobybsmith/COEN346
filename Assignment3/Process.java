@@ -30,7 +30,9 @@ public class Process {
     private BufferedReader reader;
     private PrintWriter writer;
 
-    public Process(int id, Socket socket, Buffer buffer) throws Exception {
+    private boolean isUnsafe = false;
+
+    public Process(int id, Socket socket, Buffer buffer, boolean safe) throws Exception {
         this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         this.writer = new PrintWriter(socket.getOutputStream(), true);
         this.buffer = buffer;
@@ -38,7 +40,13 @@ public class Process {
         // Writes the PID to the connected client - will be unique
         writer.println(uid);
         this.processId = uid;
+        this.isUnsafe = safe;
         uid += 1;
+    }
+
+    public void setSafetyMode(boolean set)
+    {
+        isUnsafe = set;
     }
 
     public int run(int times) {
@@ -51,7 +59,7 @@ public class Process {
                 }
 
                 System.out.println("sent");
-                if (queued_intr_true) {
+                if (queued_intr_true && !isUnsafe) {
                     // go attempt the queued instruction
                     if (Pattern.matches("[0-9]+addToBuffer[0-9]+", queued_intr)) {
                         // Parse Buffer request
@@ -115,8 +123,12 @@ public class Process {
 
     public int getItem() {
         if (buffer.isEmpty()) {
-            queued_intr = "consume";
-            queued_intr_true = true;
+            if (!isUnsafe)
+            {
+                queued_intr = "consume";
+                queued_intr_true = true;
+            }
+            
             // writer.println("SKIP");
             return -1;
         } else {
@@ -132,8 +144,11 @@ public class Process {
     public int put(int a) {
         if (buffer.isFull()) {
             // force the process to "skip" it's turn and go to the back of the queue
-            queued_intr = "0addToBuffer" + Integer.toString(a);
-            queued_intr_true = true;
+            if (!isUnsafe)
+            {
+                queued_intr = "0addToBuffer" + Integer.toString(a);
+                queued_intr_true = true;
+            }
             return -1;
         } else {
             queued_intr = "";
