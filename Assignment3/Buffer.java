@@ -26,10 +26,10 @@ class Buffer {
         }
     }
 
-    public int dequeue() {
+    public int dequeue() throws Exception{
         int temp;
         if (isEmpty()) {
-            return -1;
+            throw new Exception("Reading Empty");
         } else {
             temp = buff[front];
             buff[front] = 0;

@@ -10,6 +10,11 @@ public class ProducerClient {
         int id;
         int toSend = 0;
         int idx = 0;
+        boolean isUnsafe = false;
+        if (args[0].equals("u"))
+        {
+            isUnsafe = true;
+        }
         Scanner sc = new Scanner(System.in);
         try (Socket socket = new Socket("localhost", 8000)) {
             System.out.println("Client connected");
@@ -22,7 +27,8 @@ public class ProducerClient {
             String fromServer = reader.readLine();
             System.out.println("UUID From Server: " + fromServer);
             id = Integer.parseInt(fromServer);
-
+            
+            fromServer = reader.readLine();
             // wait for signal to start
             System.out.println("====================================");
             while (true) {
@@ -31,6 +37,10 @@ public class ProducerClient {
                     System.out.println("'0' to get a count of items in the buffer");
                     System.out.println("'1' followed by a number to add that number to the buffer");
                     System.out.println("'2' to terminate the process");
+                    if (isUnsafe)
+                    {
+                        System.out.println("'3' to produce at an index in the buffer");
+                    }
                     System.out.println("An invalid choice will be interpreted as 0");
                     System.out.print("> ");
                     int selection = -1;
@@ -43,7 +53,7 @@ public class ProducerClient {
                             selection = 0;
                         }
                         if (!(selection == 0 || selection == 2
-                                || selection == 1)) {
+                                || selection == 1 || (selection == 3 && isUnsafe))) {
                             selection = 0;
                         }
                         // Worst code ever written by far
@@ -61,8 +71,8 @@ public class ProducerClient {
                         writer.println(str);
                     }
                     String response = "null";
-                    System.out.println(parseChoice(selection));
-                    if (selection != 2 && selection != 1) {
+                    //System.out.println(parseChoice(selection));
+                    if (selection != 2 && selection != 1 && selection != 3) {
                         writer.println(parseChoice(selection));
                     }
                     if (selection == 2) {
@@ -70,6 +80,16 @@ public class ProducerClient {
                         writer.println(parseChoice(selection));
                         sc.close();
                         return;
+                    }
+                    if (selection == 3)
+                    {
+                        System.out.println("Enter an index: ");
+                        System.out.print("> ");
+                        int index = sc.nextInt();
+                        System.out.println("Enter a value: ");
+                        System.out.print("> ");
+                        int value = sc.nextInt();
+                        writer.println(Integer.toString(index) + "addToIndex" + Integer.toString(value));
                     }
                     response = reader.readLine();
                     if (selection == 0) {

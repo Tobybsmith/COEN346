@@ -27,6 +27,7 @@ public class ConsumerClient {
 
             // wait for signal to start
             fromServer = reader.readLine();
+            System.out.println("FS: " + fromServer);
             // System.out.println("Instruction From Server: " + fromServer);
             // writer.println() to send client -> server
             // reader.readline() to read from server
@@ -48,7 +49,7 @@ public class ConsumerClient {
                             selection = 0;
                         }
                         if (!(selection == 0 || selection == 1 || selection == 2)) {
-                            selection = 2; // will terminate if invalide input request
+                            selection = 0; // will terminate if invalide input request
                         }
                         // Worst code ever written by far
                         break;
@@ -71,7 +72,7 @@ public class ConsumerClient {
                         System.out.println("Consumed Item: " + response);
                     } else if (selection == 2) {
                         System.out.println("Terminating");
-                        break;
+                        System.exit(0);
                     }
                     // writer.println(Process.NEXT_ITEM_POS);
                     System.out.println("Sent request");
@@ -106,7 +107,7 @@ public class ConsumerClient {
             case 2:
                 return "terminate";
             default:
-                return "terminate";
+                return "getNumItems";
         }
     }
 }

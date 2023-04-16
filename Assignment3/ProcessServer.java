@@ -8,7 +8,8 @@ public class ProcessServer {
 
     private static OSSimulator simulator;
     public static void main(String[] args){
-        if (args[1].equals("s"))
+        //System.out.println(args[0]);
+        if (args[0].equals("s"))
         {
             simulator = new OSSimulator(false);
         }

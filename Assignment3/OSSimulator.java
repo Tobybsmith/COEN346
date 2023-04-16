@@ -65,47 +65,52 @@ public class OSSimulator extends Thread {
     public void run() {
         while (true) {
             // Schedule
+            //THIS LINE IS REQUIRED TO RUN THE PROGRAM FOR AN UNKNOWN REASON
             System.out.println("Scheduling");
             Process client = schedule();
 
-            System.out.println(client);
+            //System.out.println(client);
             if (client != null) {
                 int result = client.run(1);
+                //This is RR with an arbitrarily large time quantum :)
                 if (result == -1) {
                     // delete process from queue and processes
                     clients[LocationInQueue] = null;
+                    LocationInQueue += 1;
+                    LocationInQueue %= clients.length;
                 } else if (result != -2 && result != -3) {
-                    System.out.println("Result: " + result);
-                    clients[LocationInQueue] = null;
+                    //SUCCESS ?
+                    //System.out.println("Result: " + result);
                     for (int i = 0; i < clients.length; i++) {
                         if (clients[(LocationInQueue + i) % clients.length] == null) {
                             // empty spot, place it here
                             clients[(LocationInQueue + i) % clients.length] = client;
                         }
                     }
+                    clients[LocationInQueue] = null;
                     LocationInQueue += 1;
                     LocationInQueue %= clients.length;
                 } else if (result == -2) {
                     // producer
                     produceQueue.add(client);
-                    clients[LocationInQueue] = null;
                     for (int i = 0; i < clients.length; i++) {
                         if (clients[(LocationInQueue + i) % clients.length] == null) {
                             // empty spot, place it here
                             clients[(LocationInQueue + i) % clients.length] = client;
                         }
                     }
+                    clients[LocationInQueue] = null;
                     LocationInQueue += 1;
                     LocationInQueue %= clients.length;
                 } else if (result == -3) {
                     consumeQueue.add(client);
-                    clients[LocationInQueue] = null;
                     for (int i = 0; i < clients.length; i++) {
                         if (clients[(LocationInQueue + i) % clients.length] == null) {
                             // empty spot, place it here
                             clients[(LocationInQueue + i) % clients.length] = client;
                         }
                     }
+                    clients[LocationInQueue] = null;
                     LocationInQueue += 1;
                     LocationInQueue %= clients.length;
                     // consumer

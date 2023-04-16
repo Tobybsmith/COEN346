@@ -3,6 +3,7 @@
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Arrays;
+//import.java.util.semaphore; 
 
 import java.io.*;
 import java.net.Socket;
@@ -15,10 +16,12 @@ public class Process {
     public final static String TERMINATE = "terminate";
     public final static String ADD_BUF = "addToBuffer";
     public final static String CONSUME = "consume";
+    public final static String ADDINDEX = "addToIndex";
     private String queued_intr = "";
     private boolean queued_intr_true = false;
     private static Pattern P_BUF;
     private static Pattern G_BUF;
+    //Private sem = semaphore(0);
 
     private int processId;
     public static int uid = 0;
@@ -55,6 +58,7 @@ public class Process {
         for (int i = 0; i < times; i++) {
             try {
                 if (!queued_intr_true) {
+                    System.out.println("Sending RUN Command");
                     writer.println("RUN");
                 }
 
@@ -66,6 +70,10 @@ public class Process {
                         System.out.println("Adding to buffer");
                         parseBufferRequest(queued_intr);
                         System.out.println("Adding: " + val + ", To: " + idx);
+                        //sem.wait();
+                        //buffer.buff[idx] = val;
+                        //sem.signal();  
+                        //remove put(val) if statement;
                         if (put(val) == -1) {
                             // put failed
                             return -2;
@@ -81,11 +89,13 @@ public class Process {
                     }
                 }
                 String instruction = reader.readLine();
+                System.out.println("I: " + instruction);
                 if (instruction.equals(NUM_ITEMS)) {
                     getNumberofItems();
                 } else if (instruction.equals(NEXT_ITEM_POS)) {
                     getNextItemPosition();
                 } else if (instruction.equals(TERMINATE)) {
+                    writer.println("die");
                     return -1;
                 } else if (instruction.equals(CONSUME)) {
                     // Consume from buffer here
@@ -104,7 +114,19 @@ public class Process {
                         return 0;
                     }
                 }
+                //Only run if UNSAFE mode is enabled
+                if (Pattern.matches("[0-9]+addToIndex[0-9]+", instruction))  { //added && isUnsafe *******
+                    System.out.println("Added to index");
+                    String[] arr = instruction.split("addToIndex");
+
+                    val = Integer.parseInt(arr[1]);
+                    idx = Integer.parseInt(arr[0]);
+                    //Will leave buffer.size and buffer.front in unknown state, causing a race condition :)
+                    buffer.buff[idx] = val;
+                    writer.println(0);
+                }
             } catch (IOException e) {
+                System.out.println("IO Exception Found");
                 return -1;
             }
 
@@ -135,7 +157,17 @@ public class Process {
             queued_intr = "";
             queued_intr_true = false;
         }
-        int item = buffer.dequeue();
+        int item = -1;
+        try
+        {
+            item = buffer.dequeue();
+        }
+        catch (Exception e)
+        {
+            System.out.println("Race condition has broken the buffer! Shutting down");
+            System.exit(1);
+        }
+        
         // send to client
         writer.println(item);
         return 0;
