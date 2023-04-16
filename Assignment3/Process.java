@@ -21,7 +21,6 @@ public class Process {
     private boolean queued_intr_true = false;
     private static Pattern P_BUF;
     private static Pattern G_BUF;
-    //Private sem = semaphore(0);
 
     private int processId;
     public static int uid = 0;
@@ -70,10 +69,7 @@ public class Process {
                         System.out.println("Adding to buffer");
                         parseBufferRequest(queued_intr);
                         System.out.println("Adding: " + val + ", To: " + idx);
-                        //sem.wait();
-                        //buffer.buff[idx] = val;
-                        //sem.signal();  
-                        //remove put(val) if statement;
+
                         if (put(val) == -1) {
                             // put failed
                             return -2;
@@ -115,7 +111,7 @@ public class Process {
                     }
                 }
                 //Only run if UNSAFE mode is enabled
-                if (Pattern.matches("[0-9]+addToIndex[0-9]+", instruction))  { //added && isUnsafe *******
+                if (Pattern.matches("[0-9]+addToIndex[0-9]+", instruction))  { 
                     System.out.println("Added to index");
                     String[] arr = instruction.split("addToIndex");
 
